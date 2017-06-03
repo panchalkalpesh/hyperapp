@@ -1,4 +1,4 @@
-export default function(app) {
+export function Router(app) {
   return {
     state: {
       router: match(location.pathname)
