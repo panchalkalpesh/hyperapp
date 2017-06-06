@@ -20,11 +20,11 @@ export default function(app) {
     })
   }
 
-  if (document.readyState[0] !== "l") {
-    load()
-  } else {
-    addEventListener("DOMContentLoaded", load)
-  }
+  // if (document.readyState[0] !== "l") {
+  return load()
+  // } else {
+  //   addEventListener("DOMContentLoaded", load)
+  // }
 
   function init(namespace, children, lastName) {
     Object.keys(children || []).map(function(key) {
@@ -56,8 +56,7 @@ export default function(app) {
   }
 
   function load() {
-    render(state, view)
-    emit("loaded")
+    return emit("loaded", render(state, view))
   }
 
   function emit(name, data) {
@@ -72,12 +71,12 @@ export default function(app) {
   }
 
   function render(state, view) {
-    element = patch(
+    return (element = patch(
       app.root || (app.root = document.body),
       element,
       node,
       (node = emit("render", view)(state, actions))
-    )
+    ))
   }
 
   function merge(a, b) {
@@ -98,6 +97,9 @@ export default function(app) {
   }
 
   function createElementFrom(node, isSVG) {
+    if (node instanceof HTMLElement) {
+      return node
+    }
     if (typeof node === "string") {
       var element = document.createTextNode(node)
     } else {
