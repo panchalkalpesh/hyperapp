@@ -1,31 +1,39 @@
 # Keys
 
-Every time your application is rendered, a virtual node tree is created from scratch.
+Every time your application is rendered, a [virtual node](/docs/virtual-nodes.md) tree is created from scratch.
 
-Keys help identify which nodes were added, changed or removed from the new/old tree.
+Keys help identify which nodes were added, changed or removed in a list when comparing the old and new tree.
 
-Use keys to tell the render algorithm to re-order the children instead of mutating them.
-
-```jsx
-<ul>
-  {urls.map((url, id) => (
-    <li key={id}>
-      <img src={url} />
-    </li>
-  ))}
-</ul>
-```
-
-Use keys also to force an element to be created only once.
+Use keys to identify items in a list that can be re-ordered or where items can be added to / removed from.
 
 ```jsx
-<ul>
-  <li key="hyper">Hyper</li>
-  <li>Super</li>
-  <li>Ultra</li>
-</ul>
+const ImageGallery = images =>
+  <ul>
+    {images.map(({ hash, url, description }) =>
+      <li key={hash}>
+        <img src={url} alt={description} />
+      </li>
+    )}
+  </ul>
 ```
 
-If new elements are added to the list, the position of the keyed element will change.
+Don't use an array index as key. If the position and number of items in a list is fixed, it will make no difference, but if the list is dynamic, the key will change every time the tree is rebuilt.
 
-Using a key in this way, we make sure <samp>hyper</samp> is always inserted at the right position instead of mutating its siblings for the same result.
+To select a valid key, find a unique property for each item among its siblings.
+
+```jsx
+const PlayerList = players =>
+  <ul>
+    {players
+      .sort((player, nextPlayer) => nextPlayer.score - item.score)
+      .map(player =>
+        <li key={player.username} class={player.isAlive ? "alive" : "dead"}>
+          <PlayerCard {...player} />
+        </li>
+      )}
+  </ul>
+```
+
+## Top-Level Nodes
+
+Keys are not registered on the top-level node of your [view](/docs/view.md). If you are toggling the top-level view, and you must use keys, wrap them in an unchanging node.

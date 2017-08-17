@@ -1,108 +1,215 @@
-# API
+# Reference
+<!-- TOC -->
 
-* [hyperapp.h](#h)
-* [hyperapp.app](#app)
-  * [props.state](#state)
-  * [props.view](#view)
-  * [props.actions](#actions)
-  * [props.events](#events)
-    * [loaded](#loaded)
-    * [action](#action)
-    * [update](#update)
-    * [render](#render)
-  * [props.mixins](#mixins)
-  * [props.root](#root)
-* [emit](#emit)
+- [h](#h)
+  - [Component](#component)
+  - [VirtualNode](#virtualnode)
+  - [Attributes](#attributes)
+    - [VirtualDOMEvents](#virtualdomevents)
+- [app](#app)
+  - [State](#state)
+  - [View](#view)
+  - [Actions](#actions)
+    - [ActionInfo](#actioninfo)
+    - [ActionResult](#actionresult)
+    - [Thunk](#thunk)
+  - [Events](#events)
+    - [Default Events](#default-events)
+    - [CustomEvent](#customevent)
+  - [Mixins](#mixins)
+    - [Mixin](#mixin)
+  - [Root](#root)
+- [Emit](#emit)
+- [Update](#update)
+
+<!-- /TOC -->
 
 ## h
 
-[vnode]: /docs/core.md#virtual-nodes
+<pre>
+h(
+  string | <a href="#component">Component</a>,
+  <a href="#attributes">Attributes</a>,
+  Array&lt<a href="#virtualnode">VirtualNode</a>&gt | string
+): <a href="#virtualnode">VirtualNode</a>
+</pre>
 
-Type: ([tag](#h-tag), [data](#h-data), [children](#h-children)): [vnode]
+### Component
 
-* <a name="h-tag"></a>tag: string | ([props](#h-data), [children](#h-children)): [vnode]
-* <a name="h-data"></a>data: {}
-* <a name="h-children"></a>children: string | Array\<[vnode]\>
+See [Components](/docs/components.md).
+
+<pre>
+<i>Component</i>(
+  any,
+  Array&lt<a href="#virtualnode">VirtualNode</a>&gt | string
+): <a href="#virtualnode">VirtualNode</a>
+</pre>
+
+### VirtualNode
+
+See [Virtual Nodes](/docs/virtual-nodes.md).
+
+<pre>
+{
+  tag: string,
+  data: <a href="#attributes">Attributes</a>,
+  children: Array&lt<a href="#virtualnode">VirtualNode</a>&gt
+}
+</pre>
+
+### Attributes
+
+<pre>
+<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes">HTMLAttributes</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute">SVGAttributes</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/Events">DOMEvents</a> | <a href="#virtualdom-events">VirtualDOMEvents</a>
+</pre>
+
+#### VirtualDOMEvents
+
+See [VirtualDOM Events](/docs/vdom-events.md).
+
+<pre>
+<a id="oncreate"></a>oncreate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>): void
+<a id="onupdate"></a>onupdate(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>, <a href="#attributes">Attributes</a>): void
+<a id="onremove"></a>onremove(<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>): void
+</pre>
 
 ## app
 
-Type: ([props](#app-props))
+<pre>
+app({
+  state: <a href="#state">State</a>,
+  view: <a href="#view">View</a>,
+  actions: <a href="#actions">Actions</a>,
+  events: <a href="#events">Events</a>,
+  mixins: <a href="#mixins">Mixins</a>,
+  root: <a href="#root">Root</a>
+}): <a href="#emit">Emit</a>
+</pre>
 
-* <a name="app-props"></a> props
-  * [state](#state)
-  * [view](#view)
-  * [actions](#actions)
-  * [events](#events)
-  * [mixins](#mixins)
-  * [root](#root)
+### State
 
-### state
+See [State](/docs/state.md).
 
-Type: any
+<pre>
+{
+  [key: string]:
+    | <a href="#state">State</a>
+    | any
+}
+</pre>
 
-### view
+### View
 
-Type: ([state](#state), [actions](#actions)): [vnode]
+See [View](/docs/view.md).
 
-### actions
-#### <a name="actions-foo"></a>[namespace.]_foo_
+<pre>
+(<a href="#state">State</a>, <a href="#actions">Actions</a>): <a href="#virtualnode">VirtualNode</a>
+</pre>
 
-Type: ([state](#state), [actions](#actions), [data](#actions-data), [emit](#emit))
+### Actions
 
-* <a name="actions-data"></a> data: any
+See [Actions](/docs/actions.md).
 
-### events
-#### loaded
+<pre>
+{
+  [action: string]:
+    | <a href="#actions">Actions</a>
+    | (<a href="#state">State</a>, <a href="#actions">Actions</a>, any): <a href="#actionresult">ActionResult</a>
+}
+</pre>
 
-Type: ([state](#state), [actions](#actions), _, [emit](#emit)) | Array\<[events](#loaded)\>
+#### ActionInfo
 
-Fired after the view is mounted on the DOM.
+<pre>
+{
+  name: string,
+  data: any
+}
+</pre>
 
-#### action
+#### ActionResult
 
-Type: ([state](#state), [actions](#actions), [data](#action-data), [emit](#emit)): [data](#action-data) | Array\<[action](#action)\>
+<pre>
+<a href="#state">State</a> | <a href="#thunk">Thunk</a> | void
+</pre>
 
-* <a name="action-data"></a>data
-  * name: string
-  * data: any
+#### Thunk
 
-Fired before an action is triggered.
+See [Thunks](/docs/actions.md#thunks).
 
-#### update
+<pre>
+(<a href="#update">Update</a>): any
+</pre>
 
-Type: ([state](#state), [actions](#actions), [data](#update-data), [emit](#emit)): [data](#update-data) | Array\<[update](#update)\>
+### Events
 
-* <a name="update-data"></a>data: the updated fragment of the state.
+See [Events](/docs/events.md).
 
-Fired before the state is updated.
+<pre>
+{
+  [event: string]:
+    | Array&lt<a href="#customevent">CustomEvent</a>&gt
+    | <a href="#event">CustomEvent</a>
+}
+</pre>
 
-#### render
+#### Default Events
 
-Type: ([state](#state), [actions](#actions), [view](#view), [emit](#emit)): [view](#view) | Array\<[render](#render)\>
+<pre>
+<a id="load"></a>load(<a href="#state">State</a>, <a href="#actions">Actions</a>, <a href="#root">Root</a>): <a href="#virtualnode">VirtualNode</a>
+<a id="render"></a>render(<a href="#state">State</a>, <a href="#actions">Actions</a>, <a href="#view">View</a>): <a href="#view">View</a>
+<a id="action"></a>action(<a href="#state">State</a>, <a href="#actions">Actions</a>, <a href="#actioninfo">ActionInfo</a>): <a href="#actioninfo">ActionInfo</a>
+<a id="resolve"></a>resolve(<a href="#state">State</a>, <a href="#actions">Actions</a>, <a href="#actionresult">ActionResult</a>): <a href="#actionresult">ActionResult</a>
+<a id="update_event"></a>update(<a href="#state">State</a>, <a href="#actions">Actions</a>, <a href="#state">State</a>): <a href="#state">State</a>
+</pre>
 
-Fired before the view is rendered.
+#### CustomEvent
 
-### mixins
+<pre>
+(<a href="#state">State</a>, <a href="#actions">Actions</a>, any): any
+</pre>
 
-Type: Array\<[Mixin](#mixins-mixin)\>
+### Mixins
 
-#### <a name="mixins-mixin"></a>Mixin
+See [Mixins](/docs/mixins.md).
 
-Type: ([props](#app-props)): [props](#mixin-props)
+<pre>
+Array&lt<a href="#mixin">Mixin</a>&gt
+</pre>
 
-* <a name="mixin-props"></a>props
-  * [mixins](#mixins)
-  * [state](#state)
-  * [actions](#actions)
-  * [events](#events)
+#### Mixin
 
-### root
+<pre>
+(<a href="#emit">Emit</a>): {
+  state: <a href="#state">State</a>,
+  actions: <a href="#actions">Actions</a>,
+  events: <a href="#events">Events</a>,
+  mixins: <a href="#mixins">Mixins</a>,
+}
+</pre>
 
-Type: [Element](https://developer.mozilla.org/en-US/docs/Web/API/Element) = [document.body](https://developer.mozilla.org/en-US/docs/Web/API/Document/body)
+### Root
 
-## emit
+See [Root](/docs/root.md).
 
-Type: ([event](#emit-event), [data](#emit-data)): [data](#emit-data)
+<pre>
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element">Element</a>
+</pre>
 
-* <a name="emit-event"></a>event: string
-* <a name="emit-data"></a>data: any
+## Emit
+
+See [Custom Events](/docs/events.md#custom-events).
+
+<pre>
+(string, any): any
+</pre>
+
+## Update
+
+See [Thunks](/docs/actions.md#thunks).
+
+<pre>
+(<a href="#state">State</a>): any
+</pre>
+
+
